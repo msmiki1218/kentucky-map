@@ -685,5 +685,13 @@
       });
     });
   </script>
+  <script>
+  document.querySelectorAll("path").forEach(path => {
+   path.addEventListener("click", () => {
+     const county = path.id;
+     parent.postMessage({ type: "countyClick", county }, "*");
+   });
+ });
+ </script>
 </body>
 </html>
