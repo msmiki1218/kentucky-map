@@ -692,50 +692,50 @@
 </svg>
 
 <script>
-    async function loadCSV() {
-      const response = await fetch('CSV/stem_organizations.csv');
-      const text = await response.text();
-      const rows = text.trim().split('\n');
-      const programsByCounty = {};
-
-      rows.slice(1).forEach(row => {
-        const [county, program] = row.split(',');
-        if (!programsByCounty[county]) {
-          programsByCounty[county] = [];
-        }
-        programsByCounty[county].push(program);
-      });
-
-      return programsByCounty;
-    }
-
-    function setupMap(programsByCounty) {
-      const tooltip = document.getElementById('tooltip');
-      const svg = document.querySelector('svg');
-
-      for (const [county, programs] of Object.entries(programsByCounty)) {
-        const path = svg.getElementById(county.trim());
-        if (path) {
-          path.classList.add('has-program');
-
-          path.addEventListener('mouseenter', (e) => {
-            tooltip.style.display = 'block';
-            tooltip.innerHTML = `<strong>${county}</strong><br>${programs.join('<br>')}`;
-          });
-
-          path.addEventListener('mousemove', (e) => {
-            tooltip.style.top = (e.pageY + 10) + 'px';
-            tooltip.style.left = (e.pageX + 10) + 'px';
-          });
-
-          path.addEventListener('mouseleave', () => {
-            tooltip.style.display = 'none';
-          });
-        }
-      }
-    }
-
-    loadCSV().then(setupMap);
-  </script>
+   async function loadCSV() {
+     const response = await fetch('CSV/stem_organizations.csv');
+     const text = await response.text();
+     const rows = text.trim().split('\n');
+     const programsByCounty = {};
+ 
+     rows.slice(1).forEach(row => {
+       const [program, county] = row.split(',').map(s => s.trim());
+       if (!programsByCounty[county]) {
+         programsByCounty[county] = [];
+       }
+       programsByCounty[county].push(program);
+     });
+ 
+     return programsByCounty;
+   }
+ 
+   function setupMap(programsByCounty) {
+     const tooltip = document.getElementById('tooltip');
+     const svg = document.querySelector('svg');
+ 
+     for (const [county, programs] of Object.entries(programsByCounty)) {
+       const path = svg.getElementById(county);
+       if (path) {
+         path.classList.add('has-program');
+ 
+         path.addEventListener('mouseenter', (e) => {
+           tooltip.style.display = 'block';
+           tooltip.innerHTML = `<strong>${county}</strong><br>${programs.join('<br>')}`;
+         });
+ 
+         path.addEventListener('mousemove', (e) => {
+           tooltip.style.top = (e.pageY + 10) + 'px';
+           tooltip.style.left = (e.pageX + 10) + 'px';
+         });
+ 
+         path.addEventListener('mouseleave', () => {
+           tooltip.style.display = 'none';
+         });
+       }
+     }
+   }
+ 
+   loadCSV().then(setupMap);
+ </script>
 </body>
 </html>
