@@ -2,35 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>Kentucky STEM Map</title>
   <style>
-   body {
-     margin: 0;
-     padding: 0;
-   }
-   svg {
-     width: 100%;
-     height: auto;
-     display: block;
-     margin: auto;
-   }
-   path {
-     fill: #cccccc;
-     stroke: #ffffff;
-     stroke-width: 0.5;
-     cursor: pointer;
-     transition: fill 0.3s;
-   }
-   path:hover {
-     fill: #a0c4ff;
-   }
-   path.active-county {
-     fill: #4CB8FF !important;
-     stroke: #000000;
-     stroke-width: 1;
-   }
- </style>
+    svg path {
+      fill: #e0e0e0;
+      stroke: #444;
+      stroke-width: 0.5;
+      cursor: pointer;
+    }
+
+    .has-program {
+      fill: #6FB9FF;
+    }
+
+    .tooltip {
+      position: absolute;
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 8px;
+      font-size: 14px;
+      pointer-events: none;
+      display: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+  </style>
 </head>
 <body>
+
+  <!-- Tooltip div -->
+  <div id="tooltip" class="tooltip"></div>
+
   <!-- Paste your SVG content here -->
   <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
@@ -689,25 +691,51 @@
      inkscape:connector-curvature="0" />
 </svg>
 
-
 <script>
-   // Wait for the DOM to load
-   document.addEventListener("DOMContentLoaded", function () {
-     const paths = document.querySelectorAll("svg path");
+    async function loadCSV() {
+      const response = await fetch('CSV/stem_organizations.csv');
+      const text = await response.text();
+      const rows = text.trim().split('\n');
+      const programsByCounty = {};
 
-     paths.forEach(path => {
-       path.addEventListener("click", () => {
-         // Remove 'active-county' class from all paths
-         paths.forEach(p => p.classList.remove("active-county"));
+      rows.slice(1).forEach(row => {
+        const [county, program] = row.split(',');
+        if (!programsByCounty[county]) {
+          programsByCounty[county] = [];
+        }
+        programsByCounty[county].push(program);
+      });
 
-         // Add 'active-county' class to the clicked path
-         path.classList.add("active-county");
+      return programsByCounty;
+    }
 
-         // Send the county ID to the parent window (Wix site)
-         parent.postMessage({ type: "countyClick", county: path.id }, "*");
-       });
-     });
-   });
- </script>
+    function setupMap(programsByCounty) {
+      const tooltip = document.getElementById('tooltip');
+      const svg = document.querySelector('svg');
+
+      for (const [county, programs] of Object.entries(programsByCounty)) {
+        const path = svg.getElementById(county.trim());
+        if (path) {
+          path.classList.add('has-program');
+
+          path.addEventListener('mouseenter', (e) => {
+            tooltip.style.display = 'block';
+            tooltip.innerHTML = `<strong>${county}</strong><br>${programs.join('<br>')}`;
+          });
+
+          path.addEventListener('mousemove', (e) => {
+            tooltip.style.top = (e.pageY + 10) + 'px';
+            tooltip.style.left = (e.pageX + 10) + 'px';
+          });
+
+          path.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
+          });
+        }
+      }
+    }
+
+    loadCSV().then(setupMap);
+  </script>
 </body>
 </html>
