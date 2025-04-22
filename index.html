@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Kentucky STEM Map</title>
+  <title>KentuckySTEM Map</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -711,7 +711,12 @@
        }
      }
    }
-   loadCSV().then(setupMap);
+   loadCSV()
+     .then(setupMap)
+     .catch(error => {
+       console.error("Error loading or processing CSV:", error);
+       // Optionally display an error message to the user in the UI
+     });
  </script>
 </body>
 </html>
