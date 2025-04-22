@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <title>KentuckySTEM Map</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400&family=Oswald:wght@500&display=swap" rel="stylesheet">
+
 </head>
 <body>
 
@@ -689,27 +693,35 @@
    function setupMap(programsByCounty) {
      const tooltip = document.getElementById('tooltip');
      const svg = document.querySelector('svg');
- 
-     for (const [county, programs] of Object.entries(programsByCounty)) {
-       const path = svg.getElementById(county);
-       if (path) {
-         path.classList.add('has-program');
- 
-         path.addEventListener('mouseenter', (e) => {
-           tooltip.style.display = 'block';
-           tooltip.innerHTML = `<strong>${county}</strong><br>${programs.join('<br>')}`;
-         });
- 
-         path.addEventListener('mousemove', (e) => {
-           tooltip.style.top = (e.pageY + 10) + 'px';
-           tooltip.style.left = (e.pageX + 10) + 'px';
-         });
- 
-         path.addEventListener('mouseleave', () => {
-           tooltip.style.display = 'none';
-         });
-       }
-     }
+
+     const countyPaths = svg.querySelectorAll('path'); // Get all path elements
+
+     countyPaths.forEach(path => {
+       const countyName = path.id; // Assuming the county name is the ID of the path
+
+       path.addEventListener('mouseenter', (e) => {
+         tooltip.style.display = 'block';
+         let tooltipContent = `<strong>${countyName}</strong>`; // Always show the county name
+
+         if (programsByCounty[countyName] && programsByCounty[countyName].length > 0) {
+           tooltipContent += `<br>${programsByCounty[countyName].join('<br>')}`; // Add programs if they exist
+           path.classList.add('has-program'); // Add the class if there are programs
+         } else {
+           path.classList.remove('has-program'); // Remove the class if no programs
+         }
+
+         tooltip.innerHTML = tooltipContent;
+       });
+
+       path.addEventListener('mousemove', (e) => {
+         tooltip.style.top = (e.pageY + 10) + 'px';
+         tooltip.style.left = (e.pageX + 10) + 'px';
+       });
+
+       path.addEventListener('mouseleave', () => {
+         tooltip.style.display = 'none';
+       });
+     });
    }
    loadCSV()
      .then(setupMap)

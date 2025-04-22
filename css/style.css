@@ -1,29 +1,78 @@
+/* General body background */
+body {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 400;
+  color: black;
+  background-color: white; /* Example: White as the main page background */
+}
+
+/* Existing tooltip styles with white background */
+#tooltip {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  pointer-events: none;
+  z-index: 10;
+  display: none;
+  font-family: 'Nunito', sans-serif;
+  color: black;
+}
+
+#tooltip strong {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+  color: #4cb8ff;
+}
+
+/* Style for counties with programs (accent color on potentially white base) */
+.has-program {
+  fill: #8187fe;
+}
+
+/* Hover effect for map paths (accent color on potentially white base) */
 svg path {
-    fill: #e0e0e0;
-    stroke: #444;
-    stroke-width: 0.5;
-    cursor: pointer;
-  }
+  fill: #d0d0d0; /* Or white, depending on your preference */
+  stroke: black; /* Keep the black stroke for definition */
+}
 
-  .has-program {
-    fill: #6FB9FF;
-    stroke: #333;
-    stroke-width: 0.8;
-    transition: fill 0.3s ease;
-  }
+svg path:hover {
+  fill: #6fb9ff;
+  cursor: pointer;
+}
 
-  .has-program:hover {
-    fill: #4CB8FF;
-  }
+/* General heading style */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 500;
+  color: black;
+}
 
-  .tooltip {
-    position: absolute;
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 8px;
-    font-size: 14px;
-    pointer-events: none;
-    display: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    z-index: 1000;
-  }
+/* General paragraph style */
+p, div, span, li, a {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 400;
+  color: black;
+}
+
+/* Example of using white text on a black element */
+.site-header {
+  background-color: black;
+  color: white;
+  padding: 1em;
+  text-align: center;
+}
+
+/* Example of using an accent color for a link */
+a {
+  color: #c73dff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
