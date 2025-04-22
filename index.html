@@ -690,27 +690,45 @@
      return programsByCounty;
    }
  
+   async function loadCSV() {
+     const response = await fetch('CSV/stem_organizations.csv');
+     const text = await response.text();
+     const rows = text.trim().split('\n');
+     const programsByCounty = {};
+
+     rows.slice(1).forEach(row => {
+       const [program, county] = row.split(',').map(s => s.trim());
+       if (!programsByCounty[county]) {
+         programsByCounty[county] = [];
+       }
+       programsByCounty[county].push(program);
+     });
+
+     return programsByCounty;
+   }
+
    function setupMap(programsByCounty) {
      const tooltip = document.getElementById('tooltip');
      const svg = document.querySelector('svg');
-
-     const countyPaths = svg.querySelectorAll('path'); // Get all path elements
+     const countyPaths = svg.querySelectorAll('path');
 
      countyPaths.forEach(path => {
-       const countyName = path.id; // Assuming the county name is the ID of the path
+       const countyName = path.id;
+
+       // Check if the county has programs and apply the class if it does
+       if (programsByCounty[countyName] && programsByCounty[countyName].length > 0) {
+         path.classList.add('has-program');
+       }
 
        path.addEventListener('mouseenter', (e) => {
          tooltip.style.display = 'block';
-         let tooltipContent = `<strong>${countyName}</strong>`; // Always show the county name
-
+         let tooltipContent = `<strong>${countyName}</strong>`;
          if (programsByCounty[countyName] && programsByCounty[countyName].length > 0) {
-           tooltipContent += `<br>${programsByCounty[countyName].join('<br>')}`; // Add programs if they exist
-           path.classList.add('has-program'); // Add the class if there are programs
-         } else {
-           path.classList.remove('has-program'); // Remove the class if no programs
+           tooltipContent += `<br>${programsByCounty[countyName].join('<br>')}`;
          }
-
          tooltip.innerHTML = tooltipContent;
+         // Optionally, you could add a specific hover class here if you want a different hover effect
+         // path.classList.add('hovered');
        });
 
        path.addEventListener('mousemove', (e) => {
@@ -720,11 +738,14 @@
 
        path.addEventListener('mouseleave', () => {
          tooltip.style.display = 'none';
+         // Optionally, remove the hover class on mouseleave
+         // path.classList.remove('hovered');
        });
      });
    }
+
    loadCSV()
-     .then(setupMap)
+   .then(setupMap)
      .catch(error => {
        console.error("Error loading or processing CSV:", error);
        // Optionally display an error message to the user in the UI

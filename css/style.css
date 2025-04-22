@@ -45,6 +45,10 @@ svg path:hover {
   cursor: pointer;
 }
 
+svg path.has-program:hover {
+  fill: #c73dff; /* A different hover color for counties with programs */
+}
+
 /* General heading style */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Oswald', sans-serif;
